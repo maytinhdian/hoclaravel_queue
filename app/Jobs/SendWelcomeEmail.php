@@ -2,13 +2,14 @@
 
 namespace App\Jobs;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 
 class SendWelcomeEmail implements ShouldQueue
 {
@@ -29,6 +30,16 @@ class SendWelcomeEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        $email = $this->user->email;
+        $name = $this->user->name;
+        $subject = 'Chào mừng bạn ' . $name . ' đến với TMT Viet Nam';
+        $content = '<p> Chào:' . $name . ' </p>';
+        $content .= '<p> Chúc mừng đã đăng ký thành công tài khoản </p>';
+        Mail::raw($content, function ($message) use ($email, $subject) {
+
+            $message->to($email);
+
+            $message->subject($subject);
+        });
     }
 }
